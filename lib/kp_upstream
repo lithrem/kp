@@ -101,13 +101,13 @@ function main {
 
   for F in $(list_config_available "anaconda firstboot kde-settings korora-backgrounds korora-release shared-mime-info")
   do
-    load_config ${F} || continue
+    load_config "${F}" || continue
 
     x=${KP_NAME}
-    if [ ${KP_NAME} == "korora-backgrounds" ]
+    if [ "${KP_NAME}" == "korora-backgrounds" ]
     then
       x="heisenbug-backgrounds"
-    elif [ ${KP_NAME} == "korora-release" ]
+    elif [ "${KP_NAME}" == "korora-release" ]
     then
       x="fedora-release"
     fi
@@ -119,11 +119,11 @@ function main {
 
     F_URL=$(yumdownloader --urls --releasever ${OPT_RELEASE} --source --disablerepo=korora $x | grep "rpm$")
     F_FILE=${F_URL##*/}
-    F_VERSION=$(echo ${F_FILE} | awk -F"$x-" '{ print $2 }' | sed -re 's/\.fc[0-9]+//' -e 's/\.src\.rpm//')
+    F_VERSION=$(echo "${F_FILE}" | awk -F"$x-" '{ print $2 }' | sed -re 's/\.fc[0-9]+//' -e 's/\.src\.rpm//')
 
     FT_URL=$(yumdownloader --urls --releasever ${OPT_RELEASE} --source --enablerepo=updates-testing --disablerepo=korora --disablerepo=korora-testing $x | grep "rpm$")
     FT_FILE=${FT_URL##*/}
-    FT_VERSION=$(echo ${FT_FILE} | awk -F"$x-" '{ print $2 }' | sed -re 's/\.fc[0-9]+//' -e 's/\.src\.rpm//')
+    FT_VERSION=$(echo "${FT_FILE}" | awk -F"$x-" '{ print $2 }' | sed -re 's/\.fc[0-9]+//' -e 's/\.src\.rpm//')
 
     _info "  - ${KP_VERSION}-${KP_RELEASE} - Korora"
     _info "  - ${F_VERSION} - Fedora (stable)"

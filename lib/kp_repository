@@ -38,7 +38,7 @@ function _make_deltarpms {
 
   _pushd "${DIR}"
 
-  [ -z ${OPT_VERBOSE} ] &&  _VERBOSE="" || _VERBOSE="-v"
+  [ -z "${OPT_VERBOSE}" ] &&  _VERBOSE="" || _VERBOSE="-v"
 
   # get list of rpms
   RPMS=$(find . | grep "\.rpm$")
@@ -63,7 +63,7 @@ function _make_deltarpms {
 
       for P_RPM in ${DELTA[@]}
       do
-        P_EVR=$(rpm -qp --queryformat="%{EVR}" ${P_RPM})
+        P_EVR=$(rpm -qp --queryformat="%{EVR}" "${P_RPM}")
         D_RPM="drpms/${NAME}-${P_EVR}_${EVR}.${ARCH}.drpm"
 
         _debug "    - ${P_EVR} -> ${EVR} = ${P_EVR}_${EVR}.${ARCH}.drpm"

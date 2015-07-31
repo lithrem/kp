@@ -47,12 +47,12 @@ function _template_inflate {
   fi
 
   # substitute variables
-  sed -i "s@%%KP_PATCHES%%@${_PATCH_FILES}@g" ${_OUT_FILE}
-  sed -i "s@%%KP_PATCHES_APPLY%%@${_PATCH_FILES_APPLY}@g" ${_OUT_FILE}
+  sed -i "s@%%KP_PATCHES%%@${_PATCH_FILES}@g" "${_OUT_FILE}"
+  sed -i "s@%%KP_PATCHES_APPLY%%@${_PATCH_FILES_APPLY}@g" "${_OUT_FILE}"
 
-  sed -i "s@%%KP_BASEARCH%%@${OPT_BASEARCH}@g" ${_OUT_FILE}
-  sed -i "s@%%KP_VERSION%%@${KP_VERSION}@g" ${_OUT_FILE}
-  sed -i "s@%%KP_RELEASE%%@${KP_RELEASE}@g" ${_OUT_FILE}
+  sed -i "s@%%KP_BASEARCH%%@${OPT_BASEARCH}@g" "${_OUT_FILE}"
+  sed -i "s@%%KP_VERSION%%@${KP_VERSION}@g" "${_OUT_FILE}"
+  sed -i "s@%%KP_RELEASE%%@${KP_RELEASE}@g" "${_OUT_FILE}"
 }
 
 function _check_upstream {
@@ -66,8 +66,8 @@ function _check_upstream {
 
 function _initialise_mock {
   _debug "Initialising mock build environment.."
-  ${MOCK_BIN} ${MOCK_OPTS} --root ${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH} --clean
-  ${MOCK_BIN} ${MOCK_OPTS} --root ${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH} --init
+  ${MOCK_BIN} ${MOCK_OPTS} --root "${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}" --clean
+  ${MOCK_BIN} ${MOCK_OPTS} --root "${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}" --init
   _MOCK_CLEAN=1
 }
 
@@ -85,7 +85,7 @@ function _generate_spec {
 
   for F in $(ls -1 sources/*.patch 2>/dev/null)
   do
-    F=$(basename ${F})
+    F=$(basename "${F}")
     _PATCH_FILES="${_PATCH_FILES}Patch${_PATCH_COUNT}: ${F}\n"
     _PATCH_FILES_APPLY="${_PATCH_FILES_APPLY}%patch${_PATCH_COUNT} -p1\n"
     let "_PATCH_COUNT+=1"
@@ -232,7 +232,7 @@ function _mock_build {
 
   if [[ "${KP_UPSTREAM_SRC_TYPE}" != "srpm" ]]; then
     _debug "Building source package, please wait ..."
-    ${MOCK_BIN} ${MOCK_OPTS} ${_VERBOSE} --root ${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH} --buildsrpm --spec "${_BUILD_SPEC}" --sources sources/
+    ${MOCK_BIN} ${MOCK_OPTS} ${_VERBOSE} --root "${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}" --buildsrpm --spec "${_BUILD_SPEC}" --sources sources/
   fi
   _MOCK_RET=${?}
 
@@ -248,10 +248,10 @@ function _mock_build {
   _debug "Building package, please wait ..."
   if [[ "${KP_UPSTREAM_SRC_TYPE}" == "srpm" ]]; then
     # we avoid --no-clean because we have srpm in sources
-    ${MOCK_BIN} ${MOCK_OPTS} ${_VERBOSE} --root ${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH} --rebuild "sources/${_SRPM}"
+    ${MOCK_BIN} ${MOCK_OPTS} ${_VERBOSE} --root "${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}" --rebuild "sources/${_SRPM}"
   else
     # --no-clean because we have srpm in there, else need to copy out (and build should be clean anyway)
-    ${MOCK_BIN} ${MOCK_OPTS} ${_VERBOSE} --no-clean --root ${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH} --rebuild /var/lib/mock/${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}/result/$(basename $(grep ^Wrote: /var/lib/mock/${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}/result/build.log |grep src.rpm |awk {'print $2'} |uniq))
+    ${MOCK_BIN} ${MOCK_OPTS} ${_VERBOSE} --no-clean --root "${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}" --rebuild /var/lib/mock/${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}/result/$(basename $(grep ^Wrote: /var/lib/mock/${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}/result/build.log |grep src.rpm |awk {'print $2'} |uniq))
   fi
   _MOCK_RET=${?}
 
@@ -263,18 +263,18 @@ function _mock_build {
     return 1
   fi
 
-  for P in $(grep ^Wrote: /var/lib/mock/${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}/result/build.log | awk {'print $2'} | uniq)
+  for P in $(grep ^Wrote: "/var/lib/mock/${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}/result/build.log" | awk {'print $2'} | uniq)
   do
-    _P="$(basename ${P})"
+    _P=$(basename "${P}")
     _SP="/var/lib/mock/${OPT_DIST}-${OPT_RELEASEVER}-${OPT_BASEARCH}/result/${_P}"
 
     if [ "${P:(-7)}" == "src.rpm" ]
     then
       _debug "Copying source package: ${_P}"
-      cp -f ${_SP} ${_REPO_SOURCE_DIR}
+      cp -f "${_SP}" "${_REPO_SOURCE_DIR}"
     else
       _debug "Copying package: ${_P}"
-      cp -f ${_SP} ${_REPO_ARCH_DIR}
+      cp -f "${_SP}" "${_REPO_ARCH_DIR}"
     fi
   done
 }
@@ -472,7 +472,7 @@ function main {
     # load the configuration
     for F in $(list_config_available "${PACKAGES}")
     do
-      load_config ${F}
+      load_config "${F}"
       if [ ${?} -ne 0 ]; then
         _info "Unable to load configuration. Skipping.\n"
         continue
@@ -500,7 +500,7 @@ function main {
         _initialise_mock
       fi
 
-      [ "${KP_UPSTREAM_SRC_TYPE}" == "upstream" ] && _check_upstream ${F}
+      [ "${KP_UPSTREAM_SRC_TYPE}" == "upstream" ] && _check_upstream "${F}"
 
       # ensure any build helpers are reset before sourcing
       source "${LIB_DIR}/kp_buildhelper"
@@ -521,7 +521,7 @@ function main {
         continue
       fi
 
-      _generate_spec ${F}
+      _generate_spec "${F}"
       if [ ${?} != 0 ]
       then
         _debug "Failed generate_spec"
@@ -535,7 +535,7 @@ function main {
         continue
       fi
 
-      _gather_source ${F}
+      _gather_source "${F}"
       if [ ${?} != 0 ]
       then
         _debug "Failed gather_source"
@@ -551,7 +551,7 @@ function main {
 
       _info "Building: ${KP_NAME} (${_SPEC_VERSION}-${_SPEC_RELEASE})"
 
-      _mock_build ${F}
+      _mock_build "${F}"
       if [ ${?} != 0 ]
       then
         _debug "Failed mock_build"

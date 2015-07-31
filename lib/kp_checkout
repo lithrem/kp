@@ -74,11 +74,11 @@ function _checkout_configuration_branch {
 #
 
 function _package_upstream_checkout {
-  if [ -z ${KP_NAME} ]
+  if [ -z "${KP_NAME}" ]
   then
     _error "No configuration file loaded (KP_NAME undefined). Unable to checkout package."
     return 1
-  elif [ -z ${KP_UPSTREAM_SRC_TYPE} ]
+  elif [ -z "${KP_UPSTREAM_SRC_TYPE}" ]
   then
     _error "No upstream type specified (KP_UPSTREAM_SRC_TYPE undefined)."
     return 1
@@ -137,7 +137,7 @@ function _package_upstream_checkout {
 # Note: assumes the package config has been sourced
 #
 function _package_checkout {
-  if [ -z ${KP_NAME} ]
+  if [ -z "${KP_NAME}" ]
   then
     _error "No configuration file loaded (KP_NAME undefined). Unable to checkout package."
     return 1
@@ -150,7 +150,7 @@ function _package_checkout {
   then
     _debug "Creating package path: ${_WORKING_PATH}"
 
-    if ! mkdir -p ${_WORKING_PATH}
+    if ! mkdir -p "${_WORKING_PATH}"
     then
       _error "Unable to create package path: ${_WORKING_PATH}"
       return 1
@@ -317,7 +317,7 @@ function main {
     # load the configuration
     for F in $(list_config_available "${PACKAGES}")
     do
-      load_config ${F}
+      load_config "${F}"
 
       # check for package deprecation, skip unless we're including them
       if [ "${KP_DEPRACATED}" == "yes" -a "${OPT_INCLUDE_DEPRACATED}" != "1" ]

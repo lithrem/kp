@@ -195,7 +195,7 @@ function main {
           _debug "Rebasing configuration information ..."
           git pull --rebase origin "${CURRENT_BRANCH}" || exit 1
 
-          _DELTA_COUNT=$(git rev-list HEAD...origin/${CURRENT_BRANCH} --count)
+          _DELTA_COUNT=$(git rev-list "HEAD...origin/${CURRENT_BRANCH}" --count)
 
         # otherwise, we're a new branch
         else
@@ -232,7 +232,7 @@ function main {
     for F in $(list_config_available "${PACKAGES}")
     do
       # load the configuration
-      load_config ${F} || continue
+      load_config "${F}" || continue
 
       # check for package deprecation, skip unless we're including them
       if [ "${KP_DEPRACATED}" == "yes" -a "${OPT_INCLUDE_DEPRACATED}" != "1" ]
@@ -273,10 +273,10 @@ function main {
         _git_remote_branch_available "${CURRENT_BRANCH}"
         if [ ${?} -eq 0 ]
         then
-          _REMOTE_HEAD=$(git log --pretty=format:'%H' -n 1 origin/${CURRENT_BRANCH})
+          _REMOTE_HEAD=$(git log --pretty=format:'%H' -n 1 "origin/${CURRENT_BRANCH}")
 
           # calculate commit delta count
-          _DELTA_COUNT=$(git rev-list HEAD...origin/${CURRENT_BRANCH} --count)
+          _DELTA_COUNT=$(git rev-list "HEAD...origin/${CURRENT_BRANCH}" --count)
 
           _info " L: ${_LOCAL_HEAD}\n R: ${_REMOTE_HEAD}\n C: ${KP_RELEASE_GIT_COMMIT}\n D: ${_DELTA_COUNT}"
 
@@ -289,7 +289,7 @@ function main {
             # re-calculate the remote head
 
             # re-calculate commit delta count
-            _DELTA_COUNT=$(git rev-list HEAD...origin/${CURRENT_BRANCH} --count)
+            _DELTA_COUNT=$(git rev-list "HEAD...origin/${CURRENT_BRANCH}" --count)
 
             if [[ ${_DELTA_COUNT} -gt 0 ]]
             then
@@ -299,7 +299,7 @@ function main {
                 git pull --rebase origin "${CURRENT_BRANCH}" || exit 1
 
                 # re-calculate commits delta count
-                _DELTA_COUNT=$(git rev-list HEAD...origin/${CURRENT_BRANCH} --count)
+                _DELTA_COUNT=$(git rev-list "HEAD...origin/${CURRENT_BRANCH}" --count)
               else
                 _info "Not pulling upstream changes. To pull add --pull."
               fi
@@ -309,7 +309,7 @@ function main {
 
             # recalculate heads
             _LOCAL_HEAD=$(git log --pretty=format:'%H' -n 1)
-            _REMOTE_HEAD=$(git log --pretty=format:'%H' -n 1 origin/${CURRENT_BRANCH})
+            _REMOTE_HEAD=$(git log --pretty=format:'%H' -n 1 "origin/${CURRENT_BRANCH}")
             _HAVE_DELTA=
             [ "${KP_RELEASE_GIT_COMMIT}" != "${_LOCAL_HEAD}" ] && _HAVE_DELTA=1
 

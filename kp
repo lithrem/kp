@@ -80,13 +80,13 @@ done
 # DEFAULTS
 #
 
-[ -z ${LIB_DIR} ]     && LIB_DIR="/usr/share/lib/kp/lib"
-[ -z ${CONF_DIR} ]    && CONF_DIR="/usr/share/lib/kp/conf"
-[ -z ${WORKING_DIR} ] && WORKING_DIR="/var/lib/kp"
-[ -z ${RELEASE_DIR} ] && RELEASE_DIR="/tmp"
-[ -z ${LOG_DIR} ]     && LOG_DIR="/usr/share/lib/kp/log"
+[ -z "${LIB_DIR}" ]     && LIB_DIR="/usr/share/lib/kp/lib"
+[ -z "${CONF_DIR}" ]    && CONF_DIR="/usr/share/lib/kp/conf"
+[ -z "${WORKING_DIR}" ] && WORKING_DIR="/var/lib/kp"
+[ -z "${RELEASE_DIR}" ] && RELEASE_DIR="/tmp"
+[ -z "${LOG_DIR}" ]     && LOG_DIR="/usr/share/lib/kp/log"
 
-[[ -z ${CONFIG_FILE} ]] && [[ -f "${_CALLED}/kp.conf" ]] && CONFIG_FILE="${_CALLED}/kp.conf"
+[[ -z "${CONFIG_FILE}" ]] && [[ -f "${_CALLED}/kp.conf" ]] && CONFIG_FILE="${_CALLED}/kp.conf"
 
 #
 # INCLUDES
@@ -185,7 +185,7 @@ NOW_LITERAL=$(date '+%Y-%m-%d %H:%M:%S')
 LOG_FILE="${LOG_DIR}/kp-${SUB_COMMAND}-${NOW}.log"
 if [ "${SUB_COMMAND}" != "init" ]
 then
-  touch $LOG_FILE
+  touch "$LOG_FILE"
   _log "Logging started: ${NOW_LITERAL}"
 fi
 

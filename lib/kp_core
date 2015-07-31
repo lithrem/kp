@@ -100,7 +100,7 @@ function _log {
 
   if [ -w "${LOG_FILE}" ]
   then
-    echo -e "L: ${_MSG}" >> ${LOG_FILE}
+    echo -e "L: ${_MSG}" >> "${LOG_FILE}"
   fi
 }
 
@@ -111,7 +111,7 @@ function _error {
 
   if [ -w "${LOG_FILE}" ]
   then
-    echo -e "E: ${_MSG}" >> ${LOG_FILE}
+    echo -e "E: ${_MSG}" >> "${LOG_FILE}"
   fi
 }
 
@@ -122,7 +122,7 @@ function _warn {
 
   if [ -w "${LOG_FILE}" ]
   then
-    echo -e "W: ${_MSG}" >> ${LOG_FILE}
+    echo -e "W: ${_MSG}" >> "${LOG_FILE}"
   fi
 }
 
@@ -133,7 +133,7 @@ function _info {
 
   if [ -w "${LOG_FILE}" ]
   then
-    echo -e "I: ${_MSG}" >> ${LOG_FILE}
+    echo -e "I: ${_MSG}" >> "${LOG_FILE}"
   fi
 }
 
@@ -146,7 +146,7 @@ function _debug {
 
   if [ -w "${LOG_FILE}" ]
   then
-    echo -e "D: ${_MSG}" >> ${LOG_FILE}
+    echo -e "D: ${_MSG}" >> "${LOG_FILE}"
   fi
 }
 
@@ -191,7 +191,7 @@ function _git_branch_active {
 
   if [ ${?} -eq 0 ]
   then
-    echo ${__GIT}
+    echo "${__GIT}"
   else
     _error "${__GIT}"
   fi
@@ -275,7 +275,7 @@ function reset_config_variables {
 function load_config {
   _PACKAGE=${1:-}
 
-  if [ -z $_PACKAGE ]
+  if [ -z "$_PACKAGE" ]
   then
     _debug "No package specified for loading."
     return 1
@@ -346,7 +346,7 @@ function list_config_validate {
 
   for P in "${_PACKAGES[@]}"
   do
-    is_element ${P} "${_VALID_PACKAGES[@]}" && _VALID_PACKAGE_COUNT=$((_VALID_PACKAGE_COUNT+1)) || _error "Invalid package specified: ${P}"
+    is_element "${P}" "${_VALID_PACKAGES[@]}" && _VALID_PACKAGE_COUNT=$((_VALID_PACKAGE_COUNT+1)) || _error "Invalid package specified: ${P}"
   done
 
   return $_VALID_PACKAGE_COUNT
@@ -367,9 +367,9 @@ function list_config_available {
 
   for C in $(ls -1 ${WORKING_DIR}/conf/packages.d/kp-*.conf)
   do
-    _FILE=$(basename $C)
+    _FILE=$(basename "$C")
 
-    load_config ${_FILE} || continue
+    load_config "${_FILE}" || continue
 
     if [ ${#_PACKAGES[@]} -eq 0 ]
     then
@@ -385,12 +385,12 @@ function list_config_available {
     fi
   done
 
-  echo ${_FILES}
+  echo "${_FILES}"
 }
 
 function check_config_pacakge {
   _FILE=${1:-}
-  load_config ${_FILE} || return 1
+  load_config "${_FILE}" || return 1
 
   _pushd "${WORKING_PACKAGES_DIR}/${KP_NAME}" || return 1
 }
@@ -429,7 +429,7 @@ function list_kickstart_validate {
 
   for P in "${_KICKSTARTS[@]}"
   do
-    is_element ${P} "${_VALID_KICKSTARTS[@]}" && _VALID_KICKSTART_COUNT=$((_VALID_KICKSTART_COUNT+1)) || _error "Invalid kickstart specified: ${P}"
+    is_element "${P}" "${_VALID_KICKSTARTS[@]}" && _VALID_KICKSTART_COUNT=$((_VALID_KICKSTART_COUNT+1)) || _error "Invalid kickstart specified: ${P}"
   done
 
   return $_VALID_KICKSTART_COUNT
@@ -469,7 +469,7 @@ function list_kickstart_available {
     done
   fi
 
-  echo ${_FILES}
+  echo "${_FILES}"
 }
 
 #
@@ -491,14 +491,14 @@ function get_sync_status {
   then
     _error "No configuration file loaded (KP_NAME undefined). Unable to determine sync status."
     return 1
-  elif [ -z ${KP_UPSTREAM_SRC_TYPE} ]
+  elif [ -z "${KP_UPSTREAM_SRC_TYPE}" ]
   then
     _error "No upstream type specified (KP_UPSTREAM_SRC_TYPE undefined)."
     return 1
   fi
 
   # sync requires the package directory to exist
-  [ ! -d ${WORKING_PACKAGES_DIR}/${KP_NAME} ] && return 0
+  [ ! -d "${WORKING_PACKAGES_DIR}/${KP_NAME}" ] && return 0
 
   _pushd "${WORKING_PACKAGES_DIR}/${KP_NAME}"
 
@@ -582,7 +582,7 @@ function get_sync_status {
     then
       # get the last commit and uncommit count
       _LATEST_COMMIT=$(git log --pretty=format:'%H' -n 1)
-      _UPSTREAM_LOC=$(git log --pretty=format:'%H' | grep -n ${KP_RELEASE_GIT_COMMIT} | cut -d: -f1)
+      _UPSTREAM_LOC=$(git log --pretty=format:'%H' | grep -n "${KP_RELEASE_GIT_COMMIT}" | cut -d: -f1)
 
       # couldn't find the release commit inside upstream
       [ -z "${_UPSTREAM_LOC}" ] && _UPSTREAM_LOC=-1
@@ -644,7 +644,7 @@ function get_spec_version {
   then
     # extract all global/define variables and evaluate them to the stack via "name=foo"
     IFS=$'\n'
-    for V in $(grep -e ^%define -e ^%global ${_FILE} | sed -r -e 's/-([a-zA-Z0-9]+)/_\1/g' -e 's/%(define|global)\s+([a-zA-Z0-9_]+)\s+([^ ]+)/\2="\3"/' )
+    for V in $(grep -e ^%define -e ^%global "${_FILE}" | sed -r -e 's/-([a-zA-Z0-9]+)/_\1/g' -e 's/%(define|global)\s+([a-zA-Z0-9_]+)\s+([^ ]+)/\2="\3"/' )
     do
       eval "__$V" 2>/dev/null
     done

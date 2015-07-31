@@ -139,7 +139,7 @@ function main {
     # load the configuration
     for F in $(list_config_available "${PACKAGES}")
     do
-      load_config ${F} || continue
+      load_config "${F}" || continue
 
       # check for package deprecation, skip unless we're including them
       if [ "${KP_DEPRACATED}" == "yes" -a "${OPT_INCLUDE_DEPRACATED}" != "1" ]
@@ -174,7 +174,7 @@ function main {
   then
 
     _info "Releases:"
-    for L in $(list_kickstart_available ${PACKAGES})
+    for L in $(list_kickstart_available "${PACKAGES}")
     do
       _info " -   ${L}"
     done

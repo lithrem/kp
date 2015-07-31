@@ -154,8 +154,8 @@ function main {
   if [ -w "${WORKING_DIR}" ]
   then
     # show disk usage of working dir
-    _DISK_AVAILABLE=$(df -h ${WORKING_DIR} | tail -n 1 | awk '{print $4}')
-    _DISK_USAGE=$(du -sh ${WORKING_DIR} | cut -f1)
+    _DISK_AVAILABLE=$(df -h "${WORKING_DIR}" | tail -n 1 | awk '{print $4}')
+    _DISK_USAGE=$(du -sh "${WORKING_DIR}" | cut -f1)
 
     # initial sync of configuration management package
     _info "Synchronising upstream configuration information ..."
